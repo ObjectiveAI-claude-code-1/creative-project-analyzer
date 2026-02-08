@@ -1,6 +1,6 @@
 {
   "type": "vector.function",
-  "description": "Evaluates creative projects and produces a probability distribution across quality tiers from 'Developing' to 'Masterwork'. Assesses projects through 8 distinct lenses: conceptual originality (novelty of ideas), technical execution (craft and skill), emotional resonance (capacity to evoke feeling), and aesthetic cohesion (always evaluated); plus intentional coherence, audience resonance, constraint navigation, and contextual positioning (conditionally evaluated when relevant context is provided). Each dimension contributes to determining the work's overall quality tier. Accepts text descriptions, images, videos, or audio of creative works.",
+  "description": "Evaluates creative projects across 8 dimensions (originality, execution, resonance, cohesion, plus 4 conditional dimensions), producing a probability distribution across quality tiers from Developing to Masterwork. Accepts text, images, video, or audio.",
   "input_schema": {
     "type": "object",
     "description": "A creative project to evaluate across multiple dimensions of artistic and practical merit",

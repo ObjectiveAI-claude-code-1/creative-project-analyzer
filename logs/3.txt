@@ -139,3 +139,6 @@ I need to write a README first:
 [tool_use] mcp__invent__WriteReadme
 Now let me submit again:
 [tool_use] mcp__invent__Submit
+I need to shorten the description:
+[tool_use] mcp__invent__EditDescription
+[tool_use] mcp__invent__Submit
