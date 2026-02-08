@@ -142,3 +142,26 @@ Now let me submit again:
 I need to shorten the description:
 [tool_use] mcp__invent__EditDescription
 [tool_use] mcp__invent__Submit
+The submission was successful. The commit hash is `9fb6873d7e4d1437d1f87289f21bb97b4c1c38d3`.
+
+Here's a summary of what was fixed:
+
+1. **Input Maps**: Changed from complex dimension arrays to simple `[input]` for each of the 4 mapped sub-arrays, ensuring the mapped tasks receive the full input object.
+
+2. **Skip Conditions**: Added skip expressions to tasks 4-7:
+   - Task 4 (Intentional Coherence): Skips when `creator_statement` is absent
+   - Task 5 (Audience Resonance): Skips when `target_audience` is absent
+   - Task 6 (Constraint Navigation): Skips when `project_constraints` is absent
+   - Task 7 (Contextual Positioning): Skips when `references` is absent
+
+3. **Example Inputs**: Replaced all stale example inputs with 12 fresh, diverse test cases covering:
+   - Text-only work descriptions
+   - Image inputs (URLs)
+   - Video inputs (URLs)
+   - Audio inputs (base64 encoded)
+   - Various combinations of optional fields
+   - Minimal inputs (edge case)
+   - Full inputs (all optional fields)
+   - Different creative domains (sculpture, apps, fashion, film, music, etc.)
+[result] success turns=55 cost=$1.4699 duration=175.4s
+Running submit...
