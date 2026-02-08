@@ -1,0 +1,1 @@
+Create a vibrant, creative, and experimental Vector Function. It must NOT be joke-related. About half of the tasks should be mapped. The input schema must include some optional fields. Some tasks must be conditionally skipped based on whether those optional fields are present. Each task should be very distinct from the others.

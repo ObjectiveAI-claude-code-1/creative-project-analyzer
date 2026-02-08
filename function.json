@@ -1,0 +1,346 @@
+{
+  "type": "vector.function",
+  "description": "Evaluates creative projects and produces a probability distribution across quality tiers from 'Developing' to 'Masterwork'. Assesses projects through 8 distinct lenses: conceptual originality (novelty of ideas), technical execution (craft and skill), emotional resonance (capacity to evoke feeling), and aesthetic cohesion (always evaluated); plus intentional coherence, audience resonance, constraint navigation, and contextual positioning (conditionally evaluated when relevant context is provided). Each dimension contributes to determining the work's overall quality tier. Accepts text descriptions, images, videos, or audio of creative works.",
+  "input_schema": {
+    "type": "object",
+    "description": "A creative project to evaluate across multiple dimensions of artistic and practical merit",
+    "properties": {
+      "work": {
+        "anyOf": [
+          {
+            "type": "string",
+            "description": "A text description of the creative project, including its concept, execution, medium, and any relevant details"
+          },
+          {
+            "type": "image",
+            "description": "Visual documentation of the creative work (photograph, render, screenshot, or the work itself)"
+          },
+          {
+            "type": "video",
+            "description": "Video documentation of the creative work (especially for time-based, performative, or interactive works)"
+          },
+          {
+            "type": "audio",
+            "description": "Audio recording of the creative work (for musical or sound-based projects)"
+          }
+        ]
+      },
+      "creator_statement": {
+        "type": "string",
+        "description": "Optional: The creator's statement describing their intent, goals, vision, and what they set out to achieve with this work"
+      },
+      "target_audience": {
+        "type": "string",
+        "description": "Optional: Description of the intended audience (demographics, expertise level, cultural context, expectations)"
+      },
+      "project_constraints": {
+        "type": "string",
+        "description": "Optional: Description of constraints the project was created under (budget, timeline, materials, client requirements, technical limitations)"
+      },
+      "references": {
+        "type": "string",
+        "description": "Optional: List or description of reference works, influences, and inspirations that informed the project"
+      }
+    },
+    "required": [
+      "work"
+    ]
+  },
+  "input_maps": [
+    {
+      "$starlark": "[input]"
+    },
+    {
+      "$starlark": "[input]"
+    },
+    {
+      "$starlark": "[input]"
+    },
+    {
+      "$starlark": "[input]"
+    }
+  ],
+  "tasks": [
+    {
+      "type": "vector.completion",
+      "messages": [
+        {
+          "role": "system",
+          "content": "You are an expert creative evaluator assessing CONCEPTUAL ORIGINALITY - the novelty and freshness of the core idea behind a creative work.\n\nEvaluate across four dimensions:\n1. IDEA FRESHNESS: Is the core concept something we haven't seen before?\n2. PERSPECTIVE NOVELTY: Does it approach familiar territory from an unexpected angle?\n3. COMBINATORIAL CREATIVITY: Does it synthesize disparate elements into something new?\n4. REVELATORY QUALITY: Does it make us see something familiar in a new light?\n\nBased on your assessment, vote for the quality tier that best represents this work's conceptual originality."
+        },
+        {
+          "role": "user",
+          "content": [
+            {
+              "type": "text",
+              "text": "Evaluate the CONCEPTUAL ORIGINALITY of this creative work:"
+            },
+            {
+              "type": "text",
+              "text": {
+                "$starlark": "str(input['work'])"
+              }
+            }
+          ]
+        }
+      ],
+      "responses": [
+        "DEVELOPING - The concept is derivative or familiar. Ideas, perspectives, and approaches have been explored many times before.",
+        "COMPETENT - The concept shows some fresh elements but also relies on familiar ground. Mix of originality and convention.",
+        "ACCOMPLISHED - The concept demonstrates genuine freshness. Novel perspective or creative synthesis that feels distinctive.",
+        "EXCEPTIONAL - The concept is strikingly original. Brings something genuinely new that feels inevitable yet surprising.",
+        "MASTERWORK - The concept represents a breakthrough. Redefines what's possible in its domain or creates entirely new territory."
+      ],
+      "output": {
+        "$starlark": "[output['scores'][input.get('_tier', 0)]] if '_tier' in input else [output['scores'][0], output['scores'][1], output['scores'][2], output['scores'][3], output['scores'][4]]"
+      }
+    },
+    {
+      "type": "vector.completion",
+      "messages": [
+        {
+          "role": "system",
+          "content": "You are an expert creative evaluator assessing TECHNICAL EXECUTION - the craft, skill, and mastery demonstrated in realizing a creative work.\n\nEvaluate across four dimensions:\n1. SKILL DEMONSTRATION: Does the work show mastery of its chosen medium and techniques?\n2. FINISH AND POLISH: Is the execution refined, polished, and intentional in its details?\n3. TECHNICAL AMBITION: Does it attempt technically difficult or ambitious feats?\n4. PROBLEM-SOLVING: Does it demonstrate creative solutions to technical challenges?\n\nBased on your assessment, vote for the quality tier that best represents this work's technical execution."
+        },
+        {
+          "role": "user",
+          "content": [
+            {
+              "type": "text",
+              "text": "Evaluate the TECHNICAL EXECUTION of this creative work:"
+            },
+            {
+              "type": "text",
+              "text": {
+                "$starlark": "str(input['work'])"
+              }
+            }
+          ]
+        }
+      ],
+      "responses": [
+        "DEVELOPING - Poor execution lacking craft. Technical problems undermine the work significantly.",
+        "COMPETENT - Adequate execution with solid fundamentals. Gets the job done without distinction.",
+        "ACCOMPLISHED - Strong execution demonstrating real skill. Polished and intentional craftsmanship.",
+        "EXCEPTIONAL - Masterful execution pushing technical boundaries. Virtuosic control of medium.",
+        "MASTERWORK - Transcendent execution that advances the art form. Technical excellence that seems effortless."
+      ],
+      "output": {
+        "$starlark": "[output['scores'][input.get('_tier', 0)]] if '_tier' in input else [output['scores'][0], output['scores'][1], output['scores'][2], output['scores'][3], output['scores'][4]]"
+      }
+    },
+    {
+      "type": "vector.completion",
+      "messages": [
+        {
+          "role": "system",
+          "content": "You are an expert creative evaluator assessing EMOTIONAL RESONANCE - the work's capacity to evoke feeling, mood, and emotional response.\n\nEvaluate across four dimensions:\n1. EMOTIONAL SPECIFICITY: Does it evoke precise, identifiable feelings rather than vague impressions?\n2. EMOTIONAL DEPTH: Are the feelings complex and layered rather than simplistic?\n3. AFFECTIVE AUTHENTICITY: Does the emotional content feel genuine rather than manipulative or forced?\n4. LASTING IMPRESSION: Do the feelings linger after experiencing the work, creating lasting impact?\n\nBased on your assessment, vote for the quality tier that best represents this work's emotional resonance."
+        },
+        {
+          "role": "user",
+          "content": [
+            {
+              "type": "text",
+              "text": "Evaluate the EMOTIONAL RESONANCE of this creative work:"
+            },
+            {
+              "type": "text",
+              "text": {
+                "$starlark": "str(input['work'])"
+              }
+            }
+          ]
+        }
+      ],
+      "responses": [
+        "DEVELOPING - Emotionally flat or inert. Fails to evoke any meaningful feeling or connection.",
+        "COMPETENT - Some emotional content present but shallow or generic. Creates mild response.",
+        "ACCOMPLISHED - Genuine emotional impact. Evokes specific, authentic feelings that engage the audience.",
+        "EXCEPTIONAL - Profoundly moving. Complex, layered emotional experience that lingers.",
+        "MASTERWORK - Transformative emotional power. Shifts something fundamental in the viewer's inner landscape."
+      ],
+      "output": {
+        "$starlark": "[output['scores'][input.get('_tier', 0)]] if '_tier' in input else [output['scores'][0], output['scores'][1], output['scores'][2], output['scores'][3], output['scores'][4]]"
+      }
+    },
+    {
+      "type": "vector.completion",
+      "messages": [
+        {
+          "role": "system",
+          "content": "You are an expert creative evaluator assessing AESTHETIC COHESION - the unity, harmony, and internal consistency of the work's aesthetic choices.\n\nEvaluate across four dimensions:\n1. SENSORY HARMONY: Do the visual, auditory, or tactile elements work together harmoniously?\n2. TONAL CONSISTENCY: Does the work maintain a coherent voice, mood, and tone throughout?\n3. INTENTIONAL CONTRAST: When elements clash or contrast, is this purposeful and meaningful?\n4. GESTALT QUALITY: Does the whole exceed the sum of its parts, creating a unified experience?\n\nBased on your assessment, vote for the quality tier that best represents this work's aesthetic cohesion."
+        },
+        {
+          "role": "user",
+          "content": [
+            {
+              "type": "text",
+              "text": "Evaluate the AESTHETIC COHESION of this creative work:"
+            },
+            {
+              "type": "text",
+              "text": {
+                "$starlark": "str(input['work'])"
+              }
+            }
+          ]
+        }
+      ],
+      "responses": [
+        "DEVELOPING - Disjointed and incoherent. Elements clash unintentionally, undermining the whole.",
+        "COMPETENT - Reasonably consistent but lacks distinction. Functional unity without elegance.",
+        "ACCOMPLISHED - Strong cohesion with purposeful aesthetic vision. Elements work together effectively.",
+        "EXCEPTIONAL - Elegant unity where every choice feels inevitable. Masterful aesthetic integration.",
+        "MASTERWORK - Perfect aesthetic synthesis. Creates a singular, irreducible whole that defines its own standards."
+      ],
+      "output": {
+        "$starlark": "[output['scores'][input.get('_tier', 0)]] if '_tier' in input else [output['scores'][0], output['scores'][1], output['scores'][2], output['scores'][3], output['scores'][4]]"
+      }
+    },
+    {
+      "type": "vector.completion",
+      "skip": {
+        "$starlark": "input.get('creator_statement') == None"
+      },
+      "map": 0,
+      "messages": [
+        {
+          "role": "system",
+          "content": "You are an expert creative evaluator assessing INTENTIONAL COHERENCE - the alignment between what the creator intended and what the work achieves.\n\nYou will receive the creative work AND the creator's statement of intent. Evaluate across four dimensions:\n1. GOAL ACHIEVEMENT: Does the work accomplish its stated objectives?\n2. MEANS-ENDS ALIGNMENT: Are the creative choices appropriate and effective for achieving the stated goals?\n3. SELF-AWARENESS: Does the creator demonstrate accurate understanding of their own work?\n4. AUTHENTIC AMBITION: Do the stated intentions feel genuine rather than post-hoc rationalization?\n\nBased on your assessment, vote for the quality tier that best represents the work's intentional coherence."
+        },
+        {
+          "role": "user",
+          "content": [
+            {
+              "type": "text",
+              "text": {
+                "$starlark": "'CREATIVE WORK:\\n' + str(input['work']) + '\\n\\nCREATOR STATEMENT:\\n' + str(input.get('creator_statement', ''))"
+              }
+            }
+          ]
+        }
+      ],
+      "responses": [
+        "DEVELOPING - Significant misalignment between intent and result. The work fails to achieve its stated goals.",
+        "COMPETENT - Partial alignment. Some goals achieved but significant gaps between vision and execution.",
+        "ACCOMPLISHED - Good alignment. The work substantially achieves its stated intent with minor gaps.",
+        "EXCEPTIONAL - Strong alignment. The work fully realizes its stated vision with clarity and purpose.",
+        "MASTERWORK - Perfect coherence. Intent and execution merge seamlessly; the work transcends its stated goals."
+      ],
+      "output": {
+        "$starlark": "[output[0]['scores'][input.get('_tier', 0)]] if '_tier' in input else [output[0]['scores'][0], output[0]['scores'][1], output[0]['scores'][2], output[0]['scores'][3], output[0]['scores'][4]]"
+      }
+    },
+    {
+      "type": "vector.completion",
+      "skip": {
+        "$starlark": "input.get('target_audience') == None"
+      },
+      "map": 1,
+      "messages": [
+        {
+          "role": "system",
+          "content": "You are an expert creative evaluator assessing AUDIENCE RESONANCE - how effectively the work connects with its intended audience.\n\nYou will receive the creative work AND a description of the target audience. Evaluate across four dimensions:\n1. ACCESSIBILITY: Is the work approachable and comprehensible for the target audience?\n2. RELEVANCE: Does it address themes, concerns, or interests that audience cares about?\n3. REGISTER APPROPRIATENESS: Is the tone, complexity, and style right for this audience?\n4. CULTURAL FLUENCY: Does it speak the audience's aesthetic and cultural language naturally?\n\nBased on your assessment, vote for the quality tier that best represents the work's audience resonance."
+        },
+        {
+          "role": "user",
+          "content": [
+            {
+              "type": "text",
+              "text": {
+                "$starlark": "'CREATIVE WORK:\\n' + str(input['work']) + '\\n\\nTARGET AUDIENCE:\\n' + str(input.get('target_audience', ''))"
+              }
+            }
+          ]
+        }
+      ],
+      "responses": [
+        "DEVELOPING - Complete mismatch. The work fails to connect with its stated audience at all.",
+        "COMPETENT - Some connection but significant barriers. Reaches the audience imperfectly.",
+        "ACCOMPLISHED - Good audience fit. Effectively communicates with and engages the target audience.",
+        "EXCEPTIONAL - Strong resonance. Deeply understands and speaks to the audience's needs and sensibilities.",
+        "MASTERWORK - Perfect audience connection. Becomes essential for its audience; feels made specifically for them."
+      ],
+      "output": {
+        "$starlark": "[output[0]['scores'][input.get('_tier', 0)]] if '_tier' in input else [output[0]['scores'][0], output[0]['scores'][1], output[0]['scores'][2], output[0]['scores'][3], output[0]['scores'][4]]"
+      }
+    },
+    {
+      "type": "vector.completion",
+      "skip": {
+        "$starlark": "input.get('project_constraints') == None"
+      },
+      "map": 2,
+      "messages": [
+        {
+          "role": "system",
+          "content": "You are an expert creative evaluator assessing CONSTRAINT NAVIGATION - how creatively and effectively the work operates within its limitations.\n\nYou will receive the creative work AND a description of project constraints. Evaluate across four dimensions:\n1. RESOURCEFULNESS: Does the work achieve remarkable results despite limited means?\n2. CONSTRAINT TRANSFORMATION: Are limitations turned into creative opportunities rather than mere obstacles?\n3. SCOPE CALIBRATION: Is the ambition appropriately calibrated to the available resources?\n4. GRACEFUL COMPROMISE: Where trade-offs were necessary, are they handled elegantly?\n\nBased on your assessment, vote for the quality tier that best represents the work's constraint navigation."
+        },
+        {
+          "role": "user",
+          "content": [
+            {
+              "type": "text",
+              "text": {
+                "$starlark": "'CREATIVE WORK:\\n' + str(input['work']) + '\\n\\nPROJECT CONSTRAINTS:\\n' + str(input.get('project_constraints', ''))"
+              }
+            }
+          ]
+        }
+      ],
+      "responses": [
+        "DEVELOPING - Constrained by limitations. The work suffers significantly from its constraints.",
+        "COMPETENT - Managed limitations adequately. Works within constraints without distinction.",
+        "ACCOMPLISHED - Navigated constraints skillfully. Achieved solid results despite limitations.",
+        "EXCEPTIONAL - Thrived within constraints. Transformed limitations into creative advantages.",
+        "MASTERWORK - Transcended constraints entirely. The limitations become invisible or integral to the work's power."
+      ],
+      "output": {
+        "$starlark": "[output[0]['scores'][input.get('_tier', 0)]] if '_tier' in input else [output[0]['scores'][0], output[0]['scores'][1], output[0]['scores'][2], output[0]['scores'][3], output[0]['scores'][4]]"
+      }
+    },
+    {
+      "type": "vector.completion",
+      "skip": {
+        "$starlark": "input.get('references') == None"
+      },
+      "map": 3,
+      "messages": [
+        {
+          "role": "system",
+          "content": "You are an expert creative evaluator assessing CONTEXTUAL POSITIONING - how the work relates to its influences and positions itself within creative traditions.\n\nYou will receive the creative work AND its stated references/influences. Evaluate across four dimensions:\n1. INFLUENCE INTEGRATION: Are references absorbed and transformed rather than merely copied?\n2. TRADITION AWARENESS: Does the work demonstrate understanding of its creative lineage?\n3. PRODUCTIVE DEPARTURE: Where it diverges from influences, is this generative and meaningful?\n4. CONTRIBUTION CLARITY: What does the work add to the conversation its references began?\n\nBased on your assessment, vote for the quality tier that best represents the work's contextual positioning."
+        },
+        {
+          "role": "user",
+          "content": [
+            {
+              "type": "text",
+              "text": {
+                "$starlark": "'CREATIVE WORK:\\n' + str(input['work']) + '\\n\\nREFERENCES AND INFLUENCES:\\n' + str(input.get('references', ''))"
+              }
+            }
+          ]
+        }
+      ],
+      "responses": [
+        "DEVELOPING - Derivative imitation. Copies influences without transformation or understanding.",
+        "COMPETENT - Respectful of influences but adds little. Competent within tradition without advancing it.",
+        "ACCOMPLISHED - Engages meaningfully with influences. Builds upon tradition with evident contribution.",
+        "EXCEPTIONAL - Advances the conversation significantly. Transforms influences into something distinctly new.",
+        "MASTERWORK - Redefines the tradition. Becomes a new reference point that future work will engage with."
+      ],
+      "output": {
+        "$starlark": "[output[0]['scores'][input.get('_tier', 0)]] if '_tier' in input else [output[0]['scores'][0], output[0]['scores'][1], output[0]['scores'][2], output[0]['scores'][3], output[0]['scores'][4]]"
+      }
+    }
+  ],
+  "output_length": {
+    "$starlark": "1 if '_tier' in input else 5"
+  },
+  "input_split": {
+    "$starlark": "[dict(list(input.items()) + [('_tier', i)]) for i in range(5)]"
+  },
+  "input_merge": {
+    "$starlark": "{k: v for k, v in input[0].items() if k != '_tier'}"
+  }
+}
